@@ -32,10 +32,29 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
+alembic upgrade head
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 起動後、`http://127.0.0.1:8000/health` でヘルスチェックを確認できます。
+
+### データベースマイグレーション
+
+バックエンドの仮想環境を有効にし、`backend` ディレクトリで実行します。
+`DATABASE_URL` 未設定時は `sqlite:///./data/meeting_ai.db` を使用します。
+
+```bash
+cd backend
+source .venv/bin/activate
+alembic upgrade head
+alembic current
+```
+
+マイグレーションをすべて取り消す場合は、次を実行します。
+
+```bash
+alembic downgrade base
+```
 
 ### フロントエンド
 
