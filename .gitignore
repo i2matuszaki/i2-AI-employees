@@ -1,0 +1,34 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+.next/
+coverage/
+*.tsbuildinfo
+
+# Database
+*.db
+*.db-*
+data/
+backups/
+
+# Logs
+logs/
+*.log
+
+# OS and editor
+.DS_Store
+.vscode/
+.idea/
