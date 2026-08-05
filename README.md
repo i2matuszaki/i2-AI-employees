@@ -50,11 +50,35 @@ alembic upgrade head
 alembic current
 ```
 
+利用者・セッションテーブルを含む最新状態まで適用されます。
+
 マイグレーションをすべて取り消す場合は、次を実行します。
 
 ```bash
 alembic downgrade base
 ```
+
+### デモ利用者の作成
+
+リポジトリ直下の `.env.example` を参考に、次の環境変数を実行環境へ設定します。
+値はソースコードやGitへ保存しないでください。各パスワードは8文字以上128文字以下です。
+
+```text
+DEMO_USER_PASSWORD=
+DEMO_APPROVER_PASSWORD=
+DEMO_ADMIN_PASSWORD=
+```
+
+マイグレーション適用後、バックエンドの仮想環境を有効にして実行します。
+
+```bash
+cd backend
+source .venv/bin/activate
+alembic upgrade head
+python -m app.scripts.create_demo_users
+```
+
+同じメールアドレスの利用者が存在する場合はスキップし、既存の値を変更しません。
 
 ### フロントエンド
 
