@@ -13,6 +13,8 @@ from app.utilities.email import normalize_email
 from app.utilities.identifiers import generate_uuid
 
 if TYPE_CHECKING:
+    from app.models.meeting import Meeting
+    from app.models.meeting_participant import MeetingParticipant
     from app.models.user_session import UserSession
 
 
@@ -67,6 +69,21 @@ class User(Base):
     sessions: Mapped[list[UserSession]] = relationship(
         back_populates="user",
         passive_deletes=True,
+    )
+    organizing_meetings: Mapped[list[Meeting]] = relationship(
+        back_populates="organizer",
+        foreign_keys="Meeting.organizer_user_id",
+        passive_deletes="all",
+    )
+    created_meetings: Mapped[list[Meeting]] = relationship(
+        back_populates="created_by",
+        foreign_keys="Meeting.created_by_user_id",
+        passive_deletes="all",
+    )
+    meeting_participations: Mapped[list[MeetingParticipant]] = relationship(
+        back_populates="user",
+        foreign_keys="MeetingParticipant.user_id",
+        passive_deletes="all",
     )
 
     @validates("email")

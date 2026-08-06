@@ -50,7 +50,9 @@ alembic upgrade head
 alembic current
 ```
 
-利用者・セッションテーブルを含む最新状態まで適用されます。
+利用者・セッションテーブルに加えて、マイグレーション `0003` で `meetings` と
+`meeting_participants` が追加されます。`alembic upgrade head` で最新状態まで適用されます。
+この段階では、会議CRUD APIはまだ提供しません。
 
 マイグレーションをすべて取り消す場合は、次を実行します。
 
