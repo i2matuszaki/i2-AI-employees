@@ -1,3 +1,5 @@
+import secrets
+
 from pwdlib import PasswordHash
 from pwdlib.exceptions import UnknownHashError
 
@@ -5,6 +7,7 @@ MIN_PASSWORD_LENGTH = 8
 MAX_PASSWORD_LENGTH = 128
 
 _password_hash = PasswordHash.recommended()
+_dummy_password_hash = _password_hash.hash(secrets.token_urlsafe(32))
 
 
 def validate_password(password: str) -> None:
@@ -27,3 +30,8 @@ def verify_password(password: str, password_hash: str) -> bool:
         return _password_hash.verify(password, password_hash)
     except (UnknownHashError, ValueError, TypeError):
         return False
+
+
+def verify_password_against_dummy(password: str) -> None:
+    """利用者が存在しない場合もArgon2検証相当を一度実行する。"""
+    verify_password(password, _dummy_password_hash)

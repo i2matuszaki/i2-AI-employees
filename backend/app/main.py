@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.config import settings
+from app.routers.auth import router as auth_router
 
 
 class HealthResponse(BaseModel):
@@ -19,9 +20,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.frontend_url],
     allow_credentials=True,
-    allow_methods=["GET"],
-    allow_headers=["Content-Type"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "X-CSRF-Token"],
 )
+app.include_router(auth_router)
 
 
 @app.get("/health", response_model=HealthResponse)

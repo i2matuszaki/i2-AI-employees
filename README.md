@@ -80,6 +80,60 @@ python -m app.scripts.create_demo_users
 
 同じメールアドレスの利用者が存在する場合はスキップし、既存の値を変更しません。
 
+### セッション認証設定
+
+セッションの有効期間とCookieのSecure属性は環境変数で設定します。
+
+```text
+SESSION_LIFETIME_HOURS=
+SESSION_COOKIE_SECURE=
+```
+
+`SESSION_LIFETIME_HOURS`の未設定時は8時間です。1以上168以下の整数を指定できます。
+`SESSION_COOKIE_SECURE`は`true`または`false`だけを指定でき、ローカル環境で未設定の場合は
+`false`です。`APP_ENV=production`では必ず`true`を指定してください。
+
+### ログインAPIの確認
+
+デモ利用者を作成した後、認証情報をシェル環境変数へ設定します。実際のパスワードや
+Cookie値をREADMEやシェル履歴へ固定値として保存しないでください。
+
+```bash
+export DEMO_LOGIN_EMAIL=user@demo.local
+read -r -s -p "Demo password: " DEMO_LOGIN_PASSWORD
+export DEMO_LOGIN_PASSWORD
+export COOKIE_JAR_PATH=/tmp/meeting-ai-cookies.txt
+
+curl --fail-with-body \
+  --cookie-jar "$COOKIE_JAR_PATH" \
+  --header 'Content-Type: application/json' \
+  --data "{\"email\":\"${DEMO_LOGIN_EMAIL}\",\"password\":\"${DEMO_LOGIN_PASSWORD}\"}" \
+  http://127.0.0.1:8000/api/auth/login
+```
+
+ログイン後のCookieを使用して現在の利用者を確認できます。
+
+```bash
+curl --fail-with-body \
+  --cookie "$COOKIE_JAR_PATH" \
+  http://127.0.0.1:8000/api/auth/me
+```
+
+ログアウトでは、Cookie jarに保存されたCSRF Cookieと同じ値を`X-CSRF-Token`へ指定します。
+
+```bash
+export CSRF_TOKEN="$(awk '$6 == "meeting_ai_csrf" {print $7}' "$COOKIE_JAR_PATH")"
+
+curl --fail-with-body \
+  --request POST \
+  --cookie "$COOKIE_JAR_PATH" \
+  --cookie-jar "$COOKIE_JAR_PATH" \
+  --header "X-CSRF-Token: ${CSRF_TOKEN}" \
+  http://127.0.0.1:8000/api/auth/logout
+
+unset DEMO_LOGIN_PASSWORD CSRF_TOKEN
+```
+
 ### フロントエンド
 
 別のターミナルで、Node.js 24.14.0とnpm 11.9.0を使用して起動します。

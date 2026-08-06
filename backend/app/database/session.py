@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -9,3 +11,12 @@ def create_session_factory(database_engine: Engine) -> sessionmaker[Session]:
 
 
 SessionLocal = create_session_factory(engine)
+
+
+def get_db_session() -> Iterator[Session]:
+    """APIリクエスト単位のDB Sessionを提供する。"""
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
