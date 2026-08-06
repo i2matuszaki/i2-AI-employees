@@ -52,7 +52,6 @@ alembic current
 
 利用者・セッションテーブルに加えて、マイグレーション `0003` で `meetings` と
 `meeting_participants` が追加されます。`alembic upgrade head` で最新状態まで適用されます。
-この段階では、会議CRUD APIはまだ提供しません。
 
 マイグレーションをすべて取り消す場合は、次を実行します。
 
@@ -135,6 +134,25 @@ curl --fail-with-body \
 
 unset DEMO_LOGIN_PASSWORD CSRF_TOKEN
 ```
+
+### 会議CRUD API
+
+会議本体と参加者情報を、次のAPIで操作できます。すべてセッション認証が必要です。
+`POST`、`PATCH`、`DELETE`では、CSRF Cookieと同じ値を`X-CSRF-Token`ヘッダーへ指定します。
+
+- `POST /api/meetings`: 会議作成
+- `GET /api/meetings`: 会議一覧取得
+- `GET /api/meetings/{meeting_id}`: 会議詳細取得
+- `PATCH /api/meetings/{meeting_id}`: 会議更新
+- `DELETE /api/meetings/{meeting_id}`: 会議削除
+
+一覧では`status`、`organizer_user_id`、`created_by_user_id`、`scheduled_from`、
+`scheduled_to`、`limit`、`offset`をクエリパラメータとして指定できます。
+
+PATCHで`participants`を省略した場合は既存参加者を維持します。指定した場合は参加者全体を
+置き換え、空配列を指定すると全参加者を削除します。参加者単独の部分更新APIはありません。
+
+現時点では、文字起こし、要約・議事録生成、承認、Notion連携は提供していません。
 
 ### フロントエンド
 

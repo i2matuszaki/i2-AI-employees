@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from app.config import settings
 from app.routers.auth import router as auth_router
+from app.routers.meetings import router as meetings_router
 
 
 class HealthResponse(BaseModel):
@@ -20,10 +21,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.frontend_url],
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
     allow_headers=["Content-Type", "X-CSRF-Token"],
 )
 app.include_router(auth_router)
+app.include_router(meetings_router)
 
 
 @app.get("/health", response_model=HealthResponse)
