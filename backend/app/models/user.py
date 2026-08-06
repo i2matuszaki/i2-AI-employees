@@ -15,6 +15,8 @@ from app.utilities.identifiers import generate_uuid
 if TYPE_CHECKING:
     from app.models.meeting import Meeting
     from app.models.meeting_participant import MeetingParticipant
+    from app.models.transcript_run import TranscriptRun
+    from app.models.transcript_segment import TranscriptSegment
     from app.models.user_session import UserSession
 
 
@@ -84,6 +86,24 @@ class User(Base):
         back_populates="user",
         foreign_keys="MeetingParticipant.user_id",
         passive_deletes="all",
+    )
+    created_transcript_runs: Mapped[list[TranscriptRun]] = relationship(
+        back_populates="created_by",
+        foreign_keys="TranscriptRun.created_by_user_id",
+        passive_deletes="all",
+        cascade="save-update, merge",
+    )
+    spoken_transcript_segments: Mapped[list[TranscriptSegment]] = relationship(
+        back_populates="speaker_user",
+        foreign_keys="TranscriptSegment.speaker_user_id",
+        passive_deletes="all",
+        cascade="save-update, merge",
+    )
+    edited_transcript_segments: Mapped[list[TranscriptSegment]] = relationship(
+        back_populates="edited_by",
+        foreign_keys="TranscriptSegment.edited_by_user_id",
+        passive_deletes="all",
+        cascade="save-update, merge",
     )
 
     @validates("email")

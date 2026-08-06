@@ -51,7 +51,8 @@ alembic current
 ```
 
 利用者・セッションテーブルに加えて、マイグレーション `0003` で `meetings` と
-`meeting_participants` が追加されます。`alembic upgrade head` で最新状態まで適用されます。
+`meeting_participants`、`0004` で `transcript_runs` と `transcript_segments` が追加されます。
+`alembic upgrade head` で最新状態まで適用されます。
 
 マイグレーションをすべて取り消す場合は、次を実行します。
 
@@ -152,7 +153,17 @@ unset DEMO_LOGIN_PASSWORD CSRF_TOKEN
 PATCHで`participants`を省略した場合は既存参加者を維持します。指定した場合は参加者全体を
 置き換え、空配列を指定すると全参加者を削除します。参加者単独の部分更新APIはありません。
 
-現時点では、文字起こし、要約・議事録生成、承認、Notion連携は提供していません。
+### 文字起こしデータの保存
+
+`transcript_runs` は文字起こし処理の実行履歴、`transcript_segments` は発言単位の
+文字起こしデータを保存します。これらはマイグレーション `0004` で追加され、
+`alembic upgrade head` で適用されます。
+
+`raw_response` は監査・再処理のために外部サービスの原文を保持する領域です。
+秘密情報や認証情報を保存せず、全文をログへ出力しないでください。
+
+現時点では、文字起こしAPI、外部AI連携、音声アップロード、要約・議事録生成、承認、
+Notion連携は提供していません。
 
 ### フロントエンド
 

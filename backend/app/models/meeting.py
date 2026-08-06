@@ -13,6 +13,7 @@ from app.utilities.identifiers import generate_uuid
 
 if TYPE_CHECKING:
     from app.models.meeting_participant import MeetingParticipant
+    from app.models.transcript_run import TranscriptRun
     from app.models.user import User
 
 
@@ -99,6 +100,12 @@ class Meeting(Base):
     )
     participants: Mapped[list[MeetingParticipant]] = relationship(
         back_populates="meeting",
+        passive_deletes="all",
+        cascade="save-update, merge",
+    )
+    transcript_runs: Mapped[list[TranscriptRun]] = relationship(
+        back_populates="meeting",
+        foreign_keys="TranscriptRun.meeting_id",
         passive_deletes="all",
         cascade="save-update, merge",
     )

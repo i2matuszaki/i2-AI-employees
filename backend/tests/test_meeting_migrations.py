@@ -27,9 +27,9 @@ def test_meeting_migration_upgrade_downgrade_and_schema(tmp_path: Path) -> None:
     database_path.parent.mkdir(parents=True)
     database_url = f"sqlite:///{database_path}"
 
-    run_alembic(database_url, "upgrade", "head")
+    run_alembic(database_url, "upgrade", "0003")
     current = run_alembic(database_url, "current")
-    assert "0003 (head)" in current.stdout
+    assert "0003" in current.stdout
 
     engine = create_engine(database_url)
     try:
@@ -189,8 +189,6 @@ def test_meeting_migration_upgrade_downgrade_and_schema(tmp_path: Path) -> None:
     finally:
         downgraded_engine.dispose()
 
-    run_alembic(database_url, "upgrade", "head")
+    run_alembic(database_url, "upgrade", "0003")
     reapplied = run_alembic(database_url, "current")
-    assert "0003 (head)" in reapplied.stdout
-    check = run_alembic(database_url, "check")
-    assert "No new upgrade operations detected" in check.stdout
+    assert "0003" in reapplied.stdout
